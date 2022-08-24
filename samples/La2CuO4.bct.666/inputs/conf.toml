@@ -1,0 +1,11 @@
+[base]
+QE_output_dir = "./work/La2CuO4.save"
+seedname = "La2CuO4"
+
+[pre.ref]
+nscf = "La2CuO4.nscf.in"
+win = "La2CuO4.win.ref"
+
+[pre.output]
+nscf = "La2CuO4.nscf_wannier.in"
+win = "La2CuO4.win"

@@ -1,0 +1,17 @@
+&param_chiqw 
+Ecut_for_eps=3.0d0,!cutoff energy for dielectric matrix (Ry)
+flg_cRPA=1/        !fRPA=0; cRPA=1
+
+&param_wannier 
+/
+&param_interpolation   
+/
+&param_visualization   
+/
+&param_calc_int 
+IX_INTJ_MIN =-1,
+IX_INTJ_MAX = 1,
+IY_INTJ_MIN =-1,
+IY_INTJ_MAX = 1,
+IZ_INTJ_MIN =-1,
+IZ_INTJ_MAX = 1/

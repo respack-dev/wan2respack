@@ -1,0 +1,4 @@
+[base]
+QE_output_dir = "./work/La2CuO4.save"
+seedname = "La2CuO4"
+selfk = true

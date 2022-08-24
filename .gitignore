@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Fortran
+*.o
+*.mod
+*.x
+
+# editor
+.idea/
+.vscode/
+.DS_Store
+./data
+bin/
+
