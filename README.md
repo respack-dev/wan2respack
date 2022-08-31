@@ -114,7 +114,7 @@ These wave functions will be used for calculating dielectric functions. Reducing
 Next, please run the following command.
 
 ```bash
-$python $PATH_to_Install/bin/wan2repsack.py -pp conf.toml
+$python $PATH_to_Install/bin/wan2respack.py -pp conf.toml
 ```
 
 The purpose of this command is as follows.
@@ -147,7 +147,7 @@ $Wanier90/wannier90.x Al
 ```
 
 ### 4. Preparation for RESPACK
-Using `wan2repsack.py`, you can convert the *Wannier90* results into the *RESPACK* Wannier format.
+Using `wan2respack.py`, you can convert the *Wannier90* results into the *RESPACK* Wannier format.
 ```bash
 $python $PATH_to_Install/bin/wan2respack.py conf.toml
 ```
