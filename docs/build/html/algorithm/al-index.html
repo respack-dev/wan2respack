@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4. Algorithm &#8212; wan2respack Documentation 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. Acknowledgement" href="../acknowledgement_en.html" />
+    <link rel="prev" title="3. File specification" href="../filespecification/fi-index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="algorithm">
+<span id="ch-algorithm"></span><h1><span class="section-number">4. </span>Algorithm<a class="headerlink" href="#algorithm" title="Permalink to this heading">¶</a></h1>
+<p>In RESPACK, the <span class="math notranslate nohighlight">\(i\)</span>-th Wannier function is defined as</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-al-index-0">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-algorithm-al-index-0" title="Permalink to this equation">¶</a></span>\[w_{i, 0}({\bf r}) = \frac{1}{\sqrt{N_k}} \sum_{{\bf k}} \sum_{m=1}^{N_w} \sum_{n=N_s}^{N_s+N_b} U_{im}^{{\bf k}} U_{mn}^{{\bf k}, opt} \psi_{nk}(\bf{r})\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(U, U^{opt}\)</span> are unitary matrix, <span class="math notranslate nohighlight">\(\psi_{n{\bf k}}(r)\)</span> is <span class="math notranslate nohighlight">\(n\)</span>-th Bloch wave function, <span class="math notranslate nohighlight">\(N_s\)</span> and <span class="math notranslate nohighlight">\(N_b\)</span> are determined from the energy-window information.
+The Bloch wave function is defined as</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-al-index-1">
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-algorithm-al-index-1" title="Permalink to this equation">¶</a></span>\[\psi_{n{\bf k}} =\frac{1}{\sqrt{N_k}} \frac{1}{\sqrt{\Omega}} \sum_{{\bf G}} C_{{\bf G}n}({\bf k}) e^{i({\bf k}+{\bf G})\cdot {\bf r}}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(C_{{\bf G}n}\)</span> is the expansion coefficient of plane wave.
+By inserting this, the Wannier function is written as</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-al-index-2">
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-algorithm-al-index-2" title="Permalink to this equation">¶</a></span>\[w_{i, 0}({\bf r}) = \frac{1}{N_k} \sum_{{\bf k}} \sum_{{\bf G}} \tilde{C_{{\bf G}i}}({\bf k})\frac{1}{\sqrt{\Omega}}e^{i({\bf k}+{\bf G})\cdot r}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\tilde{C_{\bf{G}i}}(\bf{k})\)</span> is the expansion coefficient of the plane wave for the Wannier function:</p>
+<div class="math notranslate nohighlight" id="equation-algorithm-al-index-3">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-algorithm-al-index-3" title="Permalink to this equation">¶</a></span>\[\tilde{C_{{\bf G} i}}({\bf k}) = \sum_{m=1}^{N_w} \sum_{n=N_s}^{N_s+N_b} U_{im}^{{\bf k}} U_{mn}^{{\bf k}, opt} C_{{\bf G}n}\]</div>
+<p><span class="math notranslate nohighlight">\(U^{{\bf k},opt}\)</span> is required at dielectric function calculation, and <span class="math notranslate nohighlight">\(\tilde{C_{{\bf G}i}}({\bf k})\)</span> is required at Coulomb calculation.
+This program generates <span class="math notranslate nohighlight">\(\tilde{C_{{\bf G}i}}(\bf{k})\)</span> using <span class="math notranslate nohighlight">\(C_{{\bf G}n}\)</span> made by QE and <span class="math notranslate nohighlight">\(U^{{\bf k}}, U^{{\bf k}, opt}\)</span> made by Wannier90.</p>
+<p><strong>K-points Order</strong></p>
+<p>RESPACK performs calculations based on the information at irreducible k-points (<span class="math notranslate nohighlight">\(\psi_{k\in irr}\)</span>).
+This is because the information at reduicble k-points (<span class="math notranslate nohighlight">\(\psi_{k \in reducible}\)</span>) can be generated by using the symmetry.
+On the other hand, Wannier90 calculates <span class="math notranslate nohighlight">\(U^{{\bf k}}\)</span> and so on based on <span class="math notranslate nohighlight">\(\psi_{k \in reducible}\)</span>.
+The <span class="math notranslate nohighlight">\({\bf k}\)</span>-order of <span class="math notranslate nohighlight">\(\psi_{k \in reducible}\)</span> used in Wannier90 must be the same as the <span class="math notranslate nohighlight">\({\bf k}\)</span>-order of <span class="math notranslate nohighlight">\(\psi_{k \in reducible}\)</span> generated by the symmetry in RESPACK.
+In pre-process mode, an operation is performed to align the <span class="math notranslate nohighlight">\({\bf k}\)</span>-order.</p>
+<section id="relations-between-expressions-and-file-names">
+<span id="file-expression-label"></span><h2><span class="section-number">4.1. </span>Relations between expressions and file names<a class="headerlink" href="#relations-between-expressions-and-file-names" title="Permalink to this heading">¶</a></h2>
+<p>This program finally outputs the four files in <code class="docutils literal notranslate"><span class="pre">dir-wan</span></code> directory.
+The expressions and the corresponding files are shown below.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\tilde{C_{{\bf G}i}}(\bf{k})\)</span> — <code class="docutils literal notranslate"><span class="pre">dat.wan</span></code></p></li>
+<li><p><span class="math notranslate nohighlight">\(N_s, N_b\)</span>  — <code class="docutils literal notranslate"><span class="pre">dat.ns-nb</span></code></p></li>
+<li><p><span class="math notranslate nohighlight">\(U^{{\bf k}}U^{{\bf k},opt}\)</span> — <code class="docutils literal notranslate"><span class="pre">dat.umat</span></code></p></li>
+<li><p><span class="math notranslate nohighlight">\(&lt;w_{i0}|r|w_{i0}&gt;\)</span> — <code class="docutils literal notranslate"><span class="pre">dat.wan-center</span></code></p></li>
+</ul>
+</section>
+<section id="references">
+<h2><span class="section-number">4.2. </span>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>K. Nakamura, Y. Yoshimoto, Y. Nomura, T. Tadano,
+M. Kawamura, T. Kosugi, K. Yoshimi, T. Misawa, and Y. Motoyama,
+<a class="reference external" href="https://doi.org/10.1016/j.cpc.2020.107781">Comput. Phys. Commun. 261, 107781 (2021)</a></p></li>
+<li><p>N. Marzari, A. A. Mostofi, J. R. Yates, I. Souza, and D. Vanderbilt,
+<a class="reference external" href="https://doi.org/10.1103/RevModPhys.84.1419">Rev. Mod. Phys. 84, 1419 (2012)</a></p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">wan2respack Documentation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../howtouse/ho-index.html">1. How to use wan2respack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">2. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">3. File specification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Algorithm</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#relations-between-expressions-and-file-names">4.1. Relations between expressions and file names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">4.2. References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">5. Acknowledgement</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../filespecification/fi-index.html" title="previous chapter"><span class="section-number">3. </span>File specification</a></li>
+      <li>Next: <a href="../acknowledgement_en.html" title="next chapter"><span class="section-number">5. </span>Acknowledgement</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, wan2respack team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/algorithm/al-index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
