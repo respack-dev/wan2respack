@@ -26,9 +26,9 @@ python $PATH_to_INSTALL/bin/wan2respack.py conf.toml
 # RESPACK
 export OMP_NUM_THREADS=4
 export MKL_NUM_THREADS=4
-mpirun -np 4 $RES/src/chiqw/calc_chiqw < input.in > LOG.chiqw
+mpirun -np 4 $RES/src/chiqw/calc_chiqw < respack.in > LOG.chiqw
 
 export OMP_NUM_THREADS=16
 export MKL_NUM_THREADS=16
-$RES/src/calc_int/calc_w3d < input.in > LOG.w3d
-$RES/src/calc_int/calc_j3d < input.in > LOG.j3d
+$RES/src/calc_int/calc_w3d < respack.in > LOG.w3d
+$RES/src/calc_int/calc_j3d < respack.in > LOG.j3d
