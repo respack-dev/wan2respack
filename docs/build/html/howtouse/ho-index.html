@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>1. How to use wan2respack &#8212; wan2respack Documentation 1.0.0 documentation</title>
+    <title>2. How to use wan2respack &#8212; wan2respack Documentation 1.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -17,8 +17,8 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2. Tutorial" href="../tutorial/tu-index.html" />
-    <link rel="prev" title="Welcome to wan2respack’s documentation!" href="../index.html" />
+    <link rel="next" title="3. Tutorial" href="../tutorial/tu-index.html" />
+    <link rel="prev" title="1. What is wan2respack ?" href="../about-index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,9 +36,9 @@
           <div class="body" role="main">
             
   <section id="how-to-use-wan2respack">
-<h1><span class="section-number">1. </span>How to use wan2respack<a class="headerlink" href="#how-to-use-wan2respack" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">2. </span>How to use wan2respack<a class="headerlink" href="#how-to-use-wan2respack" title="Permalink to this heading">¶</a></h1>
 <section id="prerequisite">
-<h2><span class="section-number">1.1. </span>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">2.1. </span>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this heading">¶</a></h2>
 <p><strong>Required packages</strong></p>
 <p>Install the following three packages</p>
 <ol class="arabic simple">
@@ -57,7 +57,7 @@ Execute the following command.</p>
 </div>
 </section>
 <section id="structure">
-<h2><span class="section-number">1.2. </span>Structure<a class="headerlink" href="#structure" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">2.2. </span>Structure<a class="headerlink" href="#structure" title="Permalink to this heading">¶</a></h2>
 <p><em>wan2respack</em> has the following directory structure</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>|--CMakeLists.txt
 |--LICENSE
@@ -84,7 +84,7 @@ Execute the following command.</p>
 </div>
 </section>
 <section id="installation">
-<h2><span class="section-number">1.3. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">2.3. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p><em>wan2respack</em> can be downloaded from the following GitHub page.
 <a class="reference external" href="https://github.com/respack-dev/wan2respack">https://github.com/respack-dev/wan2respack</a></p>
 <p>Users can compile <em>wan2respack</em> using CMake.
@@ -142,7 +142,7 @@ This script requires a configuration toml file as an argument.</p></li>
 </div></blockquote>
 </section>
 <section id="basic-usage">
-<h2><span class="section-number">1.4. </span>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">2.4. </span>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p>Perform first principles calculations by QE</p></li>
 </ol>
@@ -172,7 +172,7 @@ This script requires a configuration toml file as an argument.</p></li>
 <li><p>Convert Wannier functions to RESPACK format by running wan2respack.py</p></li>
 </ol>
 <section id="prepare-input-files">
-<h3><span class="section-number">1.4.1. </span>Prepare input files<a class="headerlink" href="#prepare-input-files" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">2.4.1. </span>Prepare input files<a class="headerlink" href="#prepare-input-files" title="Permalink to this heading">¶</a></h3>
 <p>Prepare the following files. See <a class="reference internal" href="../filespecification/fi-index.html#file-spec"><span class="std std-ref">Input files</span></a> for details.</p>
 <ul class="simple">
 <li><p>QE scf input.</p></li>
@@ -192,7 +192,7 @@ This script requires a configuration toml file as an argument.</p></li>
 </ul>
 </section>
 <section id="run-wan2respack">
-<h3><span class="section-number">1.4.2. </span>Run <em>wan2respack</em><a class="headerlink" href="#run-wan2respack" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">2.4.2. </span>Run <em>wan2respack</em><a class="headerlink" href="#run-wan2respack" title="Permalink to this heading">¶</a></h3>
 <p>After the calculations at the irreducible k-points,</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python wan2respack.py conf.toml -pp
 </pre></div>
@@ -225,29 +225,30 @@ This script requires a configuration toml file as an argument.</p></li>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. How to use wan2respack</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#prerequisite">1.1. Prerequisite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#structure">1.2. Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation">1.3. Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-usage">1.4. Basic usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#prepare-input-files">1.4.1. Prepare input files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#run-wan2respack">1.4.2. Run <em>wan2respack</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about-index.html">1. What is wan2respack ?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. How to use wan2respack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisite">2.1. Prerequisite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#structure">2.2. Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">2.3. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">2.4. Basic usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prepare-input-files">2.4.1. Prepare input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-wan2respack">2.4.2. Run <em>wan2respack</em></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">2. Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">3. File specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">4. Algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">5. Acknowledgement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tu-index.html">3. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filespecification/fi-index.html">4. File specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithm/al-index.html">5. Algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgement_en.html">6. Acknowledgement</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to wan2respack’s documentation!</a></li>
-      <li>Next: <a href="../tutorial/tu-index.html" title="next chapter"><span class="section-number">2. </span>Tutorial</a></li>
+      <li>Previous: <a href="../about-index.html" title="previous chapter"><span class="section-number">1. </span>What is wan2respack ?</a></li>
+      <li>Next: <a href="../tutorial/tu-index.html" title="next chapter"><span class="section-number">3. </span>Tutorial</a></li>
   </ul></li>
 </ul>
 </div>
