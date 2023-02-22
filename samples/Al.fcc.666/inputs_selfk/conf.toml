@@ -1,4 +1,0 @@
-[base]
-QE_output_dir = "./work/Al.save"
-seedname = "Al"
-selfk = true

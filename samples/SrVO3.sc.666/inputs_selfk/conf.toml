@@ -1,4 +1,0 @@
-[base]
-QE_output_dir = "./work/SrVO3.save"
-seedname = "SrVO3"
-selfk = true
