@@ -13,8 +13,8 @@ This section explains all input files from SCF calculation to Coulomb interactio
 - QE nscf input file
 
 - Wannier90 input file
-    Do not write k-points block.
-    This file is used as only reference.
+    Do not write a k-point block.
+    This file is used only as a reference.
 
 - pw2wannier90 input file
 
@@ -38,32 +38,32 @@ This section explains all input files from SCF calculation to Coulomb interactio
 
 
     1. ``base``
-        - ``QE_output_dir`` : *QE* output directory
-        - ``seedname`` : The same string as seedname used in *Wannier90*
-        - ``selfk`` (optional, Default: ``false``) : Flag to set k-points manually at the pre-process mode.
+        - ``QE_output_dir``: *QE* output directory
+        - ``seedname``: Same string as the seedname used in *Wannier90*
+        - ``selfk`` (optional, Default: ``false``): Flag to set k-points manually at the pre-process mode
 
     2. ``pre.ref``
-        - ``nscf`` : File name of the *QE* nscf input file you prepared
-        - ``win`` : File name of the *Wannier90* input file you prepared
+        - ``nscf``: File name of the *QE* nscf input file prepared by the user
+        - ``win``: File name of the *Wannier90* input file prepared by the user
 
     3. ``pre.output``
-        - ``nscf`` : File name of the new *QE* nscf input file that is automatically generated based on ``[pre.ref]nscf``.
-        - ``win`` : File name of the new *Wannier90* input that is automatically generated base on ``[pre.ref]win``
+        - ``nscf``: File name of the new *QE* nscf input file that is automatically generated based on ``[pre.ref]nscf``
+        - ``win``: File name of the new *Wannier90* input that is automatically generated based on ``[pre.ref]win``
 
 Output files
 ============
 The details of the output files are explained.
 
-pre-process
+Preprocess
 -------------
 
 - ``[pre.output]nscf``
-    The *QE* input file whose name is determined by ``[pre.output]nscf`` in conf.toml.
-    This file is automatically made based on the reference file, ``[pre.ref]nscf``.
+    The *QE* input file having the name determined by ``[pre.output]nscf`` in conf.toml.
+    This file is automatically made based on the reference file: ``[pre.ref]nscf``.
 
 - ``[pre.output]win``
-    The *Wannier90* input file whose name is determined by ``[pre.output]win`` in conf.toml.
-    This file is automatically made based on the reference file, ``[pre.ref]win``.
+    The *Wannier90* input file having the name determined by ``[pre.output]win`` in conf.toml.
+    This file is automatically made based on the reference file: ``[pre.ref]win``.
 
 - dat.sample_mk
     The intermediate file for making input files of *QE* and *Wannier90*, including k-points.
@@ -79,12 +79,12 @@ pre-process
 - LOG.mk
     Log file.
 
-core-process
+Coreprocess
 -------------
 
 - dat.ns-nb, dat.umat, dat.wan, dat.wan-center
-    These files includes information about Wannier functions.
-    The file format is the same as *RESPACK*.
+    These files include information related to Wannier functions.
+    The file format is the same as that of *RESPACK*.
     See :ref:`file_expression-label` for details.
 
 - LOG.genwan

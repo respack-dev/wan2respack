@@ -58,8 +58,9 @@ Installation
 *wan2respack* can be downloaded from the following GitHub page.
 https://github.com/respack-dev/wan2respack
 
-Users can complie *wan2respack* by using CMake.
-An example for the installtion of *wan2respack* is as follows ::
+Users can compile *wan2respack* using CMake.
+An example of the installation of *wan2respack* is as follows ::
+  
   cd $PATH_to_wan2respack
   mkdir build 
   cd build
@@ -67,15 +68,16 @@ An example for the installtion of *wan2respack* is as follows ::
   make
   make install
 
-, where ``$PATH_to_wan2respack`` is the path to *wan2respack* directory and ``$PATH_to_Install`` is the path to the directory for the installation.
-By replacing ``$Type_of_Configure`` for a name of CMake configure files, users can specify compilers they want to use.
-In :math:`\alpha` version, the following ``$Type_of_Configure`` are available ::
+where ``$PATH_to_wan2respack`` is the path to the *wan2respack* directory and ``$PATH_to_Install`` is the path to the directory for the installation.
+By replacing ``$Type_of_Configure`` with the name of a CMake configure file, the user can specify the compilers they want to use.
+In the version 1, the following ``$Type_of_Configure`` are available. ::
+  
   intel: Intel compiler + MKL
   gcc: GCC compiler
 
-The details of compiler options can be found in CMake configure files in ``$PATH_to_wan2respack/config`` directory.
+The details of the compiler options can be found in the CMake configure files inthe ``$PATH_to_wan2respack/config`` directory.
 
-All the binary files and the Python script are installed to ``$PATH_to_Install/bin``.
+All of the binary files and the Python script are installed to ``$PATH_to_Install/bin``.
 Their details are as follows:
 
   ``wan2respack.py``
@@ -92,7 +94,7 @@ Their details are as follows:
    - Python script for saving the QE results and exporting k-points with gen_mk.x and qe2respack.py.
   
   ``wan2respack_core.py``
-   - Python script for preparing files about Wannier functions in RESPACK format with gen_wan.x and qe2respack.py.
+   - Python script for preparing files related to Wannier functions in RESPACK format with gen_wan.x and qe2respack.py.
 
   ``qe2respack.py``
    - Python script for generating input files of RESPACK from QE band calculations. This script is originally distributed under GNU GPL ver.3 by open-source software RESPACK ver. 20200113.
@@ -108,11 +110,11 @@ Basic usage
   - Only norm-conserving pseudopotentials can work in RESPACK.
   - Perform the calculation at the irreducible k-points. 
 
-2. Running wan2respack.py in pre-process mode
+2. Run wan2respack.py in pre-process mode
 
-  - Export k-points to be calculated to nscf-input and wannier90-input.
+  - Export k-points to be calculated to nscf-input and Wannier90-input.
   
-3. Generate Wannier functions by QE & Wannier90
+3. Generate Wannier functions by QE and Wannier90
 
   - Use the input files made by the previous step.
 
@@ -129,9 +131,9 @@ Prepare the following files. See :ref:`file_spec` for details.
 
   -  Be sure to use *{automatic}* to set the k-point.
 
-- wannier90 input file.
+- Wannier90 input file.
 
-  - Do not write kpoints-block.
+  - Do not write the k-point block.
 
 - pw2wannier90 input file.
 
@@ -141,15 +143,15 @@ Prepare the following files. See :ref:`file_spec` for details.
 
 
 Run *wan2respack*
-----------------
+-----------------
 After the calculations at the irreducible k-points, ::
 
   python wan2respack.py conf.toml -pp
 
 The above command generates ``new_nscf`` and ``new_win`` files with the k-points list to be calculated.
 
-After the Wannier functions are generated, ::
+After the Wannier functions are generated: ::
 
   python wan2respack.py conf.toml
 
-The ``dir-wan`` directory and four files inside it are generated.
+The ``dir-wan`` directory and four files inside this directory are generated.

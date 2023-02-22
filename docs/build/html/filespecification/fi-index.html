@@ -44,8 +44,8 @@
 <li><p>QE scf input file</p></li>
 <li><p>QE nscf input file</p></li>
 <li><dl class="simple">
-<dt>Wannier90 input file</dt><dd><p>Do not write k-points block.
-This file is used as only reference.</p>
+<dt>Wannier90 input file</dt><dd><p>Do not write a k-point block.
+This file is used only as a reference.</p>
 </dd>
 </dl>
 </li>
@@ -70,25 +70,25 @@ win = &quot;seedname.win&quot;
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">base</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">QE_output_dir</span></code> : <em>QE</em> output directory</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">seedname</span></code> : The same string as seedname used in <em>Wannier90</em></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">selfk</span></code> (optional, Default: <code class="docutils literal notranslate"><span class="pre">false</span></code>) : Flag to set k-points manually at the pre-process mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QE_output_dir</span></code>: <em>QE</em> output directory</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seedname</span></code>: Same string as the seedname used in <em>Wannier90</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">selfk</span></code> (optional, Default: <code class="docutils literal notranslate"><span class="pre">false</span></code>): Flag to set k-points manually at the pre-process mode</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">pre.ref</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">nscf</span></code> : File name of the <em>QE</em> nscf input file you prepared</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code> : File name of the <em>Wannier90</em> input file you prepared</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nscf</span></code>: File name of the <em>QE</em> nscf input file prepared by the user</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code>: File name of the <em>Wannier90</em> input file prepared by the user</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">pre.output</span></code></dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">nscf</span></code> : File name of the new <em>QE</em> nscf input file that is automatically generated based on <code class="docutils literal notranslate"><span class="pre">[pre.ref]nscf</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code> : File name of the new <em>Wannier90</em> input that is automatically generated base on <code class="docutils literal notranslate"><span class="pre">[pre.ref]win</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nscf</span></code>: File name of the new <em>QE</em> nscf input file that is automatically generated based on <code class="docutils literal notranslate"><span class="pre">[pre.ref]nscf</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code>: File name of the new <em>Wannier90</em> input that is automatically generated based on <code class="docutils literal notranslate"><span class="pre">[pre.ref]win</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -102,18 +102,18 @@ win = &quot;seedname.win&quot;
 <section id="output-files">
 <h2><span class="section-number">3.2. </span>Output files<a class="headerlink" href="#output-files" title="Permalink to this heading">¶</a></h2>
 <p>The details of the output files are explained.</p>
-<section id="pre-process">
-<h3><span class="section-number">3.2.1. </span>pre-process<a class="headerlink" href="#pre-process" title="Permalink to this heading">¶</a></h3>
+<section id="preprocess">
+<h3><span class="section-number">3.2.1. </span>Preprocess<a class="headerlink" href="#preprocess" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">[pre.output]nscf</span></code></dt><dd><p>The <em>QE</em> input file whose name is determined by <code class="docutils literal notranslate"><span class="pre">[pre.output]nscf</span></code> in conf.toml.
-This file is automatically made based on the reference file, <code class="docutils literal notranslate"><span class="pre">[pre.ref]nscf</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">[pre.output]nscf</span></code></dt><dd><p>The <em>QE</em> input file having the name determined by <code class="docutils literal notranslate"><span class="pre">[pre.output]nscf</span></code> in conf.toml.
+This file is automatically made based on the reference file: <code class="docutils literal notranslate"><span class="pre">[pre.ref]nscf</span></code>.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">[pre.output]win</span></code></dt><dd><p>The <em>Wannier90</em> input file whose name is determined by <code class="docutils literal notranslate"><span class="pre">[pre.output]win</span></code> in conf.toml.
-This file is automatically made based on the reference file, <code class="docutils literal notranslate"><span class="pre">[pre.ref]win</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">[pre.output]win</span></code></dt><dd><p>The <em>Wannier90</em> input file having the name determined by <code class="docutils literal notranslate"><span class="pre">[pre.output]win</span></code> in conf.toml.
+This file is automatically made based on the reference file: <code class="docutils literal notranslate"><span class="pre">[pre.ref]win</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -139,12 +139,12 @@ The remaining lines of each block give the G-vectors in terms of the reciprocal 
 </li>
 </ul>
 </section>
-<section id="core-process">
-<h3><span class="section-number">3.2.2. </span>core-process<a class="headerlink" href="#core-process" title="Permalink to this heading">¶</a></h3>
+<section id="coreprocess">
+<h3><span class="section-number">3.2.2. </span>Coreprocess<a class="headerlink" href="#coreprocess" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>dat.ns-nb, dat.umat, dat.wan, dat.wan-center</dt><dd><p>These files includes information about Wannier functions.
-The file format is the same as <em>RESPACK</em>.
+<dt>dat.ns-nb, dat.umat, dat.wan, dat.wan-center</dt><dd><p>These files include information related to Wannier functions.
+The file format is the same as that of <em>RESPACK</em>.
 See <a class="reference internal" href="../algorithm/al-index.html#file-expression-label"><span class="std std-ref">Relations between expressions and file names</span></a> for details.</p>
 </dd>
 </dl>
@@ -182,8 +182,8 @@ See <a class="reference internal" href="../algorithm/al-index.html#file-expressi
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. File specification</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#input-files">3.1. Input files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#output-files">3.2. Output files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pre-process">3.2.1. pre-process</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#core-process">3.2.2. core-process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocess">3.2.1. Preprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coreprocess">3.2.2. Coreprocess</a></li>
 </ul>
 </li>
 </ul>

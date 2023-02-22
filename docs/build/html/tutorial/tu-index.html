@@ -38,12 +38,12 @@
   <section id="tutorial">
 <h1><span class="section-number">2. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading">¶</a></h1>
 <p>In this tutorial, we demonstrate the following calculations:
-(i)  performing the first principle calculations using <em>QE</em> ,
-(ii) calculating wannier functinos using <em>Wannier90</em> ,
+(i) performing the first principle calculations using <em>QE</em>,
+(ii) calculating Wannier functions using <em>Wannier90</em>,
 (iii) generating input files for <em>RESPACK</em> using <em>wan2respack</em>, and
-(iV) calculating coulomb interactions using <em>RESPACK</em> .
+(iv) calculating Coulomb interactions using <em>RESPACK</em>.
 The sample files are located in <code class="docutils literal notranslate"><span class="pre">samples/Al.fcc.666</span></code>.
-In this directory, there are following four directories:</p>
+In this directory, there are the following four directories:</p>
 <ol class="arabic simple">
 <li><p>PP</p></li>
 </ol>
@@ -65,7 +65,7 @@ In this directory, there are following four directories:</p>
 </ol>
 <blockquote>
 <div><ul class="simple">
-<li><p>Including input files when setting k-points by yourself.</p></li>
+<li><p>Including input files when setting k-points manually by the user.</p></li>
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="4">
@@ -73,7 +73,7 @@ In this directory, there are following four directories:</p>
 </ol>
 <blockquote>
 <div><ul class="simple">
-<li><p>Including reference input files for generating wannier functions using <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em> .</p></li>
+<li><p>Including reference input files for generating Wannier functions using <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em> .</p></li>
 </ul>
 </div></blockquote>
 <section id="al-fcc">
@@ -99,32 +99,32 @@ First, change the directory to <code class="docutils literal notranslate"><span 
 </li>
 <li><p>wan2respack</p>
 <ul>
-<li><p>conf.toml: Input file of <em>wan2respack</em> for setting a path to the output directry of <em>QE</em> and seed names et al.</p></li>
+<li><p>conf.toml: Input file of <em>wan2respack</em> for setting a path to the output directory of <em>QE</em> and seed names, etc.</p></li>
 </ul>
 </li>
 <li><p>RESPACK</p>
 <ul>
-<li><p>input.in : Input file <em>RESPACK</em> .</p></li>
+<li><p>respack.in : Input file <em>RESPACK</em> .</p></li>
 </ul>
 </li>
 </ul>
 <section id="first-principle-calculations-for-the-irreducible-k-points-using-qe">
 <h3><span class="section-number">2.1.1. </span>First principle calculations for the irreducible k-points using <em>QE</em>.<a class="headerlink" href="#first-principle-calculations-for-the-irreducible-k-points-using-qe" title="Permalink to this heading">¶</a></h3>
-<p>Typing following commands, first princeple calculations of scf and nscf using <em>QE</em> will be performed:</p>
+<p>By typing the following commands, first principles calculations of scf and nscf using <em>QE</em> will be performed:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$QE/bin/pw.x &lt; Al.scf.in &gt; Al.scf.out
 $QE/bin/pw.x &lt; Al.nscf.in &gt; Al.nscf.out
 </pre></div>
 </div>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">$QE</span></code> indicates a path to an installing directory of <em>QE</em>.
-<strong>It is noted that target k-points must be irreducible.</strong></p>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">$QE</span></code> indicates a path to a directory where <em>QE</em> is installed.
+<strong>Note that target k-points must be irreducible.</strong></p>
 </section>
 <section id="export-k-points-to-be-calculated-by-wannier90">
 <h3><span class="section-number">2.1.2. </span>Export k-points to be calculated by <em>Wannier90</em>.<a class="headerlink" href="#export-k-points-to-be-calculated-by-wannier90" title="Permalink to this heading">¶</a></h3>
-<p>Next, as a preprocess, export k-points to be calculated to input files of nscf calculation and wannier90 by typing a following command.</p>
+<p>Next, as a preprocess, export k-points to be calculated to input files of nscf calculation and Wannier90 by typing the following command:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$python $PATH_to_Install/bin/wan2respack.py -pp conf.toml
 </pre></div>
 </div>
-<p>The contents of <code class="docutils literal notranslate"><span class="pre">conf.toml</span></code> is shown below</p>
+<p>The contents of <code class="docutils literal notranslate"><span class="pre">conf.toml</span></code> are shown below:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[base]
 QE_output_dir = &quot;./work/Al.save&quot;
 seedname = &quot;Al&quot;
@@ -138,16 +138,16 @@ nscf = &quot;Al.nscf_wannier.in&quot;
 win = &quot;Al.win&quot;
 </pre></div>
 </div>
-<p>In <code class="docutils literal notranslate"><span class="pre">[base]</span></code> section, an output directory of <em>QE</em> and seed name are indicated by <code class="docutils literal notranslate"><span class="pre">QE_output_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">seedname</span></code> , respectively.
-In <code class="docutils literal notranslate"><span class="pre">[pre.ref]</span></code> section, reference files for generating input files are indicated by <code class="docutils literal notranslate"><span class="pre">nscf</span></code> and <code class="docutils literal notranslate"><span class="pre">win</span></code> , respectively.
-In <code class="docutils literal notranslate"><span class="pre">[pre.output]</span></code> section, names of output files generated by <em>wan2respack</em>  are indicated by <code class="docutils literal notranslate"><span class="pre">nscf</span></code> and <code class="docutils literal notranslate"><span class="pre">win</span></code> , respectively.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">[base]</span></code> section, an output directory of <em>QE</em> and seed name are indicated by <code class="docutils literal notranslate"><span class="pre">QE_output_dir</span></code> and a <code class="docutils literal notranslate"><span class="pre">seedname</span></code> , respectively.
+In the <code class="docutils literal notranslate"><span class="pre">[pre.ref]</span></code> section, reference files for generating input files are indicated by <code class="docutils literal notranslate"><span class="pre">nscf</span></code> and <code class="docutils literal notranslate"><span class="pre">win</span></code>, respectively.
+In the <code class="docutils literal notranslate"><span class="pre">[pre.output]</span></code> section, names of output files generated by <em>wan2respack</em> are indicated by <code class="docutils literal notranslate"><span class="pre">nscf</span></code> and <code class="docutils literal notranslate"><span class="pre">win</span></code>, respectively.</p>
 <p>After finishing a calculation, <code class="docutils literal notranslate"><span class="pre">dir-wfn</span></code> directory, <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code> files will be generated
 (k-points will be  added to <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code> ).</p>
 </section>
-<section id="generate-wannier-functions-with-qe-wannier90">
-<h3><span class="section-number">2.1.3. </span>Generate Wannier functions with <em>QE</em> &amp; <em>Wannier90</em>.<a class="headerlink" href="#generate-wannier-functions-with-qe-wannier90" title="Permalink to this heading">¶</a></h3>
-<p>Using <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code> ,
-Wannier functions are generated using <em>QE</em> &amp; <em>Wannier90</em> by typing following commands.</p>
+<section id="generate-wannier-functions-with-qe-and-wannier90">
+<h3><span class="section-number">2.1.3. </span>Generate Wannier functions with <em>QE</em> and <em>Wannier90</em><a class="headerlink" href="#generate-wannier-functions-with-qe-and-wannier90" title="Permalink to this heading">¶</a></h3>
+<p>Using <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code>,
+Wannier functions are generated using <em>QE</em> and <em>Wannier90</em> by typing the following commands:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$QE/bin/pw.x &lt; Al.nscf_wannier.in &gt; Al.nscf_wannier.out
 $Wanier90/wannier90.x -pp Al
 $QE/bin/pw2wannier90.x &lt; Al.pw2wan.in &gt; Al.pw2wan.out
@@ -157,59 +157,59 @@ $Wanier90/wannier90.x Al
 </section>
 <section id="convert-wannier-functions-to-respack-format">
 <h3><span class="section-number">2.1.4. </span>Convert Wannier functions to <em>RESPACK</em> format<a class="headerlink" href="#convert-wannier-functions-to-respack-format" title="Permalink to this heading">¶</a></h3>
-<p>Converting wannier functions to <em>RESPACK</em> format can be done by using <code class="docutils literal notranslate"><span class="pre">wan2respack.py</span></code>
-The execution command is described below.</p>
+<p>Converting Wannier functions to <em>RESPACK</em> format can be performed using <code class="docutils literal notranslate"><span class="pre">wan2respack.py</span></code>
+The execution command is described below:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$python $PATH_to_Install/bin/wan2respack.py conf.toml
 </pre></div>
 </div>
-<p>After finishing calculations,  4 files are generated in <code class="docutils literal notranslate"><span class="pre">dir-wan</span></code> directory.</p>
+<p>After finishing calculations,  four files are generated in the <code class="docutils literal notranslate"><span class="pre">dir-wan</span></code> directory.</p>
 </section>
 <section id="calculation-of-coulomb-interactions-using-respack">
 <h3><span class="section-number">2.1.5. </span>Calculation of Coulomb interactions using <em>RESPACK</em><a class="headerlink" href="#calculation-of-coulomb-interactions-using-respack" title="Permalink to this heading">¶</a></h3>
-<p>Input file of <em>RESPACK</em> is prepared as <code class="docutils literal notranslate"><span class="pre">input.in</span></code> .
+<p>The input file of <em>RESPACK</em> is prepared as <code class="docutils literal notranslate"><span class="pre">respack.in</span></code> .
 Using this file, we can calculate Coulomb interactions using constrained Random Phase Approximation by <em>RESPACK</em> .</p>
 <p>The execution command is described below.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$RESPACK/bin/calc_chiqw &lt; input.in &gt; LOG.chiqw
-$RESPACK/bin/calc_w3d &lt; input.in &gt; LOG.W3d
-$RESPACK/bin/calc_j3d &lt; input.in &gt; LOG.J3d
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$RESPACK/bin/calc_chiqw &lt; respack.in &gt; LOG.chiqw
+$RESPACK/bin/calc_w3d &lt; respack.in &gt; LOG.W3d
+$RESPACK/bin/calc_j3d &lt; respack.in &gt; LOG.J3d
 </pre></div>
 </div>
 <p>The obtained results are shown in <a class="reference internal" href="#wvsr"><span class="std std-numref">Fig. 2.1</span></a>.
-The horizontal axis corresponds to the distance and the vertical axis to the screened Coulomb interaction.
-In these figures, we also plotted the numerical results obtained by using <em>RESPACK</em>.
-In this case, the calculation of Wannier functions were performed by <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em>.
-The input file <code class="docutils literal notranslate"><span class="pre">input.in</span></code> of <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> is located in <code class="docutils literal notranslate"><span class="pre">reference</span></code> directory.
-We can see that we obtained qualitatively almost the same trend, indicating that the tool is working well.
+The horizontal axis indicates the distance, and the vertical axis indicates the screened Coulomb interaction.
+In these figures, we also plotted the numerical results obtained using <em>RESPACK</em>.
+In this case, the calculation of Wannier functions was performed by <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em>.
+The input file <code class="docutils literal notranslate"><span class="pre">respack.in</span></code> of <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> is located in the <code class="docutils literal notranslate"><span class="pre">reference</span></code> directory.
+Qualitatively, almost the same trend is obtained, indicating that the tool is working well.
 The difference shown in the inset of <a class="reference internal" href="#wvsr"><span class="std std-numref">Fig. 2.1</span></a> is due to the fact
-that the Wannier function obtained with Wannier90 is not the maximally localized (num_iter =0).</p>
+that the Wannier function obtained with Wannier90 is not maximally localized (num_iter =0).</p>
 <figure class="align-default" id="wvsr">
 <a class="reference internal image-reference" href="../_images/wvsr-Al-1.pdf"><img alt="../_images/wvsr-Al-1.pdf" src="../_images/wvsr-Al-1.pdf" /></a>
 <figcaption>
 <p><span class="caption-number">Fig. 2.1 </span><span class="caption-text">Coulomb interactions obtained by constrained Random Phase Approximation.
 W90-Wannier indicates the numerical results obtained by this tutorial.
-RESAPCK-Wannier indicates the numerical results obtained by using <em>RESPACK</em> (the calculation of Wannier functions were performed by <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em> ).
-The inset shows enlarged view of Coulomb interactions obtained by constrained Random Phase Approximation.</span><a class="headerlink" href="#wvsr" title="Permalink to this image">¶</a></p>
+RESAPCK-Wannier indicates the numerical results obtained using <em>RESPACK</em> (the calculation of Wannier functions was performed by <code class="docutils literal notranslate"><span class="pre">calc_wannier</span></code> in <em>RESPACK</em> ).
+The inset shows an enlarged view of Coulomb interactions obtained by constrained Random Phase Approximation.</span><a class="headerlink" href="#wvsr" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
-<p>We also prepare sample files of La2CuO4 and SrVO3 in <code class="docutils literal notranslate"><span class="pre">samples</span></code> directory.</p>
+<p>We also prepare sample files of La2CuO4 and SrVO3 in the <code class="docutils literal notranslate"><span class="pre">samples</span></code> directory.</p>
 </section>
-<section id="optional-set-k-points-by-yourself">
-<h3><span class="section-number">2.1.6. </span>[Optional] Set k-points by yourself<a class="headerlink" href="#optional-set-k-points-by-yourself" title="Permalink to this heading">¶</a></h3>
-<p>In above tutorial, k-points are automatically exported.
-You can set k-points by yourself if you like, by typing the following command in the <code class="docutils literal notranslate"><span class="pre">inputs_selfk</span></code> directory.</p>
+<section id="optional-set-k-points-manually-by-the-user">
+<h3><span class="section-number">2.1.6. </span>[Optional] Set k-points manually by the user<a class="headerlink" href="#optional-set-k-points-manually-by-the-user" title="Permalink to this heading">¶</a></h3>
+<p>In the above tutorial, k-points are automatically exported.
+Here, k-points can be set manually by the user, if desired, by typing the following command in the <code class="docutils literal notranslate"><span class="pre">inputs_selfk</span></code> directory:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$python $PATH_to_Install/bin/wan2respack.py -pp conf.toml
 </pre></div>
 </div>
-<p>The contents of <code class="docutils literal notranslate"><span class="pre">conf.toml</span></code> is shown below</p>
+<p>The contents of <code class="docutils literal notranslate"><span class="pre">conf.toml</span></code> are shown below:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[base]
 QE_output_dir = &quot;./work/Al.save&quot;
 seedname = &quot;Al&quot;
 selfk = true
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">selfk</span></code> flag in <code class="docutils literal notranslate"><span class="pre">[base]</span></code> section must be <code class="docutils literal notranslate"><span class="pre">true</span></code> in this mode.
-The k-points list is written in <code class="docutils literal notranslate"><span class="pre">dat.sample_mk</span></code>.
-A k-points list in <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code> is determined based on <code class="docutils literal notranslate"><span class="pre">dat.sample_mk</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">selfk</span></code> flag in the <code class="docutils literal notranslate"><span class="pre">[base]</span></code> section must be <code class="docutils literal notranslate"><span class="pre">true</span></code> in this mode.
+The k-point list is written in <code class="docutils literal notranslate"><span class="pre">dat.sample_mk</span></code>.
+A k-point list in <code class="docutils literal notranslate"><span class="pre">Al.nscf_wannier.in</span></code> and <code class="docutils literal notranslate"><span class="pre">Al.win</span></code> is determined based on <code class="docutils literal notranslate"><span class="pre">dat.sample_mk</span></code>.</p>
 </section>
 </section>
 </section>
@@ -237,10 +237,10 @@ A k-points list in <code class="docutils literal notranslate"><span class="pre">
 <li class="toctree-l2"><a class="reference internal" href="#al-fcc">2.1. Al.fcc</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#first-principle-calculations-for-the-irreducible-k-points-using-qe">2.1.1. First principle calculations for the irreducible k-points using <em>QE</em>.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#export-k-points-to-be-calculated-by-wannier90">2.1.2. Export k-points to be calculated by <em>Wannier90</em>.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#generate-wannier-functions-with-qe-wannier90">2.1.3. Generate Wannier functions with <em>QE</em> &amp; <em>Wannier90</em>.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-wannier-functions-with-qe-and-wannier90">2.1.3. Generate Wannier functions with <em>QE</em> and <em>Wannier90</em></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#convert-wannier-functions-to-respack-format">2.1.4. Convert Wannier functions to <em>RESPACK</em> format</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#calculation-of-coulomb-interactions-using-respack">2.1.5. Calculation of Coulomb interactions using <em>RESPACK</em></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#optional-set-k-points-by-yourself">2.1.6. [Optional] Set k-points by yourself</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-set-k-points-manually-by-the-user">2.1.6. [Optional] Set k-points manually by the user</a></li>
 </ul>
 </li>
 </ul>

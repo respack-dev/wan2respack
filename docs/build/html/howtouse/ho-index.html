@@ -15,7 +15,6 @@
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="2. Tutorial" href="../tutorial/tu-index.html" />
@@ -88,8 +87,8 @@ Execute the following command.</p>
 <h2><span class="section-number">1.3. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p><em>wan2respack</em> can be downloaded from the following GitHub page.
 <a class="reference external" href="https://github.com/respack-dev/wan2respack">https://github.com/respack-dev/wan2respack</a></p>
-<p>Users can complie <em>wan2respack</em> by using CMake.
-An example for the installtion of <em>wan2respack</em> is as follows</p>
+<p>Users can compile <em>wan2respack</em> using CMake.
+An example of the installation of <em>wan2respack</em> is as follows</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd $PATH_to_wan2respack
 mkdir build
 cd build
@@ -98,15 +97,15 @@ make
 make install
 </pre></div>
 </div>
-<p>, where <code class="docutils literal notranslate"><span class="pre">$PATH_to_wan2respack</span></code> is the path to <em>wan2respack</em> directory and <code class="docutils literal notranslate"><span class="pre">$PATH_to_Install</span></code> is the path to the directory for the installation.
-By replacing <code class="docutils literal notranslate"><span class="pre">$Type_of_Configure</span></code> for a name of CMake configure files, users can specify compilers they want to use.
-In <span class="math notranslate nohighlight">\(\alpha\)</span> version, the following <code class="docutils literal notranslate"><span class="pre">$Type_of_Configure</span></code> are available</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">$PATH_to_wan2respack</span></code> is the path to the <em>wan2respack</em> directory and <code class="docutils literal notranslate"><span class="pre">$PATH_to_Install</span></code> is the path to the directory for the installation.
+By replacing <code class="docutils literal notranslate"><span class="pre">$Type_of_Configure</span></code> with the name of a CMake configure file, the user can specify the compilers they want to use.
+In the version 1, the following <code class="docutils literal notranslate"><span class="pre">$Type_of_Configure</span></code> are available.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>intel: Intel compiler + MKL
 gcc: GCC compiler
 </pre></div>
 </div>
-<p>The details of compiler options can be found in CMake configure files in <code class="docutils literal notranslate"><span class="pre">$PATH_to_wan2respack/config</span></code> directory.</p>
-<p>All the binary files and the Python script are installed to <code class="docutils literal notranslate"><span class="pre">$PATH_to_Install/bin</span></code>.
+<p>The details of the compiler options can be found in the CMake configure files inthe <code class="docutils literal notranslate"><span class="pre">$PATH_to_wan2respack/config</span></code> directory.</p>
+<p>All of the binary files and the Python script are installed to <code class="docutils literal notranslate"><span class="pre">$PATH_to_Install/bin</span></code>.
 Their details are as follows:</p>
 <blockquote>
 <div><dl class="simple">
@@ -128,7 +127,7 @@ This script requires a configuration toml file as an argument.</p></li>
 </ul>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">wan2respack_core.py</span></code></dt><dd><ul class="simple">
-<li><p>Python script for preparing files about Wannier functions in RESPACK format with gen_wan.x and qe2respack.py.</p></li>
+<li><p>Python script for preparing files related to Wannier functions in RESPACK format with gen_wan.x and qe2respack.py.</p></li>
 </ul>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">qe2respack.py</span></code></dt><dd><ul class="simple">
@@ -154,15 +153,15 @@ This script requires a configuration toml file as an argument.</p></li>
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="2">
-<li><p>Running wan2respack.py in pre-process mode</p></li>
+<li><p>Run wan2respack.py in pre-process mode</p></li>
 </ol>
 <blockquote>
 <div><ul class="simple">
-<li><p>Export k-points to be calculated to nscf-input and wannier90-input.</p></li>
+<li><p>Export k-points to be calculated to nscf-input and Wannier90-input.</p></li>
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="3">
-<li><p>Generate Wannier functions by QE &amp; Wannier90</p></li>
+<li><p>Generate Wannier functions by QE and Wannier90</p></li>
 </ol>
 <blockquote>
 <div><ul class="simple">
@@ -182,9 +181,9 @@ This script requires a configuration toml file as an argument.</p></li>
 <li><p>Be sure to use <em>{automatic}</em> to set the k-point.</p></li>
 </ul>
 </li>
-<li><p>wannier90 input file.</p>
+<li><p>Wannier90 input file.</p>
 <ul>
-<li><p>Do not write kpoints-block.</p></li>
+<li><p>Do not write the k-point block.</p></li>
 </ul>
 </li>
 <li><p>pw2wannier90 input file.</p></li>
@@ -199,11 +198,11 @@ This script requires a configuration toml file as an argument.</p></li>
 </pre></div>
 </div>
 <p>The above command generates <code class="docutils literal notranslate"><span class="pre">new_nscf</span></code> and <code class="docutils literal notranslate"><span class="pre">new_win</span></code> files with the k-points list to be calculated.</p>
-<p>After the Wannier functions are generated,</p>
+<p>After the Wannier functions are generated:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python wan2respack.py conf.toml
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">dir-wan</span></code> directory and four files inside it are generated.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">dir-wan</span></code> directory and four files inside this directory are generated.</p>
 </section>
 </section>
 </section>
