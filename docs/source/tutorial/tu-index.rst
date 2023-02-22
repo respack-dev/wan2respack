@@ -52,7 +52,7 @@ In this directory, the following input files are included:
 
 - RESPACK
 
-  - input.in : Input file *RESPACK* .
+  - respack.in : Input file *RESPACK* .
 
 First principle calculations for the irreducible k-points using *QE*.
 -----------------------------------------------------------------------------
@@ -117,20 +117,20 @@ After finishing calculations,  4 files are generated in ``dir-wan`` directory.
 Calculation of Coulomb interactions using *RESPACK*
 -----------------------------------------------------------------------------------------
 
-Input file of *RESPACK* is prepared as ``input.in`` .
+Input file of *RESPACK* is prepared as ``respack.in`` .
 Using this file, we can calculate Coulomb interactions using constrained Random Phase Approximation by *RESPACK* .
 
 The execution command is described below. ::
 
-    $RESPACK/bin/calc_chiqw < input.in > LOG.chiqw
-    $RESPACK/bin/calc_w3d < input.in > LOG.W3d
-    $RESPACK/bin/calc_j3d < input.in > LOG.J3d
+    $RESPACK/bin/calc_chiqw < respack.in > LOG.chiqw
+    $RESPACK/bin/calc_w3d < respack.in > LOG.W3d
+    $RESPACK/bin/calc_j3d < respack.in > LOG.J3d
 
 The obtained results are shown in :numref:`WvsR`.
 The horizontal axis corresponds to the distance and the vertical axis to the screened Coulomb interaction.
 In these figures, we also plotted the numerical results obtained by using *RESPACK*.
 In this case, the calculation of Wannier functions were performed by ``calc_wannier`` in *RESPACK*.
-The input file ``input.in`` of ``calc_wannier`` is located in ``reference`` directory.
+The input file ``respack.in`` of ``calc_wannier`` is located in ``reference`` directory.
 We can see that we obtained qualitatively almost the same trend, indicating that the tool is working well.
 The difference shown in the inset of :numref:`WvsR` is due to the fact
 that the Wannier function obtained with Wannier90 is not the maximally localized (num_iter =0).

@@ -95,7 +95,7 @@ In this directory, you can find the following files.
 - Wannier90
     - Al.win.ref : The reference input file for *Wannier90*.
 - RESPACK
-    - input.in : The input file for *RESPACK*.
+    - respack.in : The input file for *RESPACK*.
 - Script
     - submit.sh : The sample shell script file.
 
@@ -154,11 +154,11 @@ $python $PATH_to_Install/bin/wan2respack.py conf.toml
 This command reads the wavefunctions for the uniform k mesh in `QE_output_dir` and U matrices in `seedname.chk`, and generate Wannier functions and additional information in `dir-wan` directory.
 
 ### 5. Calculation of Coulomb interactions using RESPACK
-Using the *RESPACK* input file, `input.in`, you can calculate dielectric functions and Coulomb interactions within the constrained/full random phase approximation (RPA).
+Using the *RESPACK* input file, `respack.in`, you can calculate dielectric functions and Coulomb interactions within the constrained/full random phase approximation (RPA).
 ```bash
-$RESPACK/bin/calc_chiqw < input.in > LOG.chiqw
-$RESPACK/bin/calc_w3d < input.in > LOG.W3d
-$RESPACK/bin/calc_j3d < input.in > LOG.J3d
+$RESPACK/bin/calc_chiqw < respack.in > LOG.chiqw
+$RESPACK/bin/calc_w3d < respack.in > LOG.W3d
+$RESPACK/bin/calc_j3d < respack.in > LOG.J3d
 ```
 
 ##  License
