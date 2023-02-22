@@ -15,8 +15,8 @@ Download
 --------
 You can download software and source codes of wan2respack from GitHub page or release page.
 
-GitHub: https://github.com/respack-dev/wan2respack
-Release page: https://github.com/respack-dev/wan2respack/tags
+- GitHub: https://github.com/respack-dev/wan2respack
+- Release page: https://github.com/respack-dev/wan2respack/tags
 
 
 Contributors
