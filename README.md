@@ -164,5 +164,9 @@ $RESPACK/bin/calc_j3d < respack.in > LOG.J3d
 ##  License
 The distribution of the program package and the source codes for *wan2respack* follow GNU General Public License version 3 (GPL v3).
 
+We hope that you cite the following paper when you publish results using *wan2respack*.
+
+[K. Kurita, T. Misawa, K. Yoshimi, K. Ido, T. Koretsune, "Interface tool from Wannier90 to RESPACK: wan2respack", arXiv:2302.13531](https://arxiv.org/abs/2302.13531).
+
 ## Authors
 Kensuke Kurita, Takahiro Misawa, Kota Ido, Kazuyoshi Yoshimi, Kazuma Nakamura, Takashi Koretsune.
