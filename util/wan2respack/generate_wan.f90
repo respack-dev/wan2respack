@@ -242,6 +242,13 @@ contains
       READ (chk_unit) (ndimwin(nkp), nkp=1, num_kpts)
       ALLOCATE(u_matrix_opt(num_bands, num_wann, num_kpts))
       READ (chk_unit) (((u_matrix_opt(i, j, nkp), i=1, num_bands), j=1, num_wann), nkp=1, num_kpts)
+    else
+      allocate (ndimwin(num_kpts)); ndimwin(:) = num_wann
+      allocate (lwindow(num_bands, num_kpts)); lwindow(:, :) = .true.
+      allocate (u_matrix_opt(num_wann, num_wann, num_kpts)); u_matrix_opt(:, :, :) = 0.0
+      do i=1, num_wann
+        u_matrix_opt(i, i, :) = 1.0
+      enddo
     endif
     ALLOCATE(u_matrix(num_wann, num_wann, num_kpts))
     READ (chk_unit) (((u_matrix(i, j, k), i=1, num_wann), j=1, num_wann), k=1, num_kpts)
