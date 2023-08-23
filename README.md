@@ -166,7 +166,7 @@ The distribution of the program package and the source codes for *wan2respack* f
 
 We hope that you cite the following paper when you publish results using *wan2respack*.
 
-[K. Kurita, T. Misawa, K. Yoshimi, K. Ido, T. Koretsune, "Interface tool from Wannier90 to RESPACK: wan2respack", arXiv:2302.13531](https://arxiv.org/abs/2302.13531).
+[K. Kurita, T. Misawa, K. Yoshimi, K. Ido, T. Koretsune, "Interface tool from Wannier90 to RESPACK: wan2respack", Comput. Phys. Commun. **292**, 108854](https://doi.org/10.1016/j.cpc.2023.108854).
 
 ## Authors
 Kensuke Kurita, Takahiro Misawa, Kota Ido, Kazuyoshi Yoshimi, Kazuma Nakamura, Takashi Koretsune.
