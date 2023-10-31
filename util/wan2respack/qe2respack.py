@@ -231,7 +231,7 @@ def symmetry(root, oldxml=False):
         child = root.find('output').find('symmetries')
         n_sym = int(child.find('nsym').text)
         ftau = np.zeros((3, n_sym))
-        mat_sym = np.zeros((3, 3, n_sym), int)
+        mat_sym = np.zeros((3, 3, n_sym), np.int)
         for i, sym in enumerate(child.iter('symmetry')):
             ftau[:, i] = [float(x) for x in sym.find('fractional_translation').text.split()]
             rot = sym.find('rotation').text.strip().split('\n')
