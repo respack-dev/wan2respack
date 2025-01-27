@@ -1,24 +1,21 @@
 #!/usr/bin/env python
-# Copyright (c) 2018 Yuichi Motoyama, 2019 Terumasa Tadano
+# Copyright (c) 2017 Yusuke Nomura, 2018 Yuichi Motoyama, 2019 Terumasa Tadano, 2021 Jean-Baptiste Mor\'ee
 
-#
-# This is a modified/original file distributed in RESPACK code under GNU GPL ver.3.
-# https://sites.google.com/view/kazuma7k6r
-#
-
-'''
+"""
 qe2respack.py -- convert Quantum ESPRESSO output into RESPACK input.
 See `qe2respack.py --help`
-'''
+"""
 
 from __future__ import print_function
+
+import argparse
 import os
 import os.path
-import sys
 import shutil
 import struct
-import argparse
+import sys
 import xml.etree.ElementTree as ET
+
 import numpy as np
 
 if sys.version_info[0:2] < (2, 7):
@@ -30,9 +27,16 @@ class Iotk_dat():
         self.f = open(filename, 'rb')
         self.integer_nptype = {2: np.int16, 4: np.int32, 8: np.int64}
         self.integer_fmt = {2: 'h', 4: 'i', 8: 'q'}
-        self.float_nptype = {4: np.float32, 8: np.float64, 16: np.float128}
+
+        # Some environments do not have float128 dtype
+        if hasattr(np, 'float128') and hasattr(np, 'complex256'):
+            self.float_nptype = {4: np.float32, 8: np.float64, 16: np.float128}
+            self.complex_nptype = {4: np.complex64, 8: np.complex128, 16: np.complex256}
+        else:
+            self.float_nptype = {4: np.float32, 8: np.float64}
+            self.complex_nptype = {4: np.complex64, 8: np.complex128}
+
         self.float_fmt = {4: 'f', 8: 'd'}
-        self.complex_nptype = {4: np.complex64, 8: np.complex128, 16: np.complex256}
 
         if endian == 'little':
             self.endian_fmt = '<'
@@ -120,16 +124,25 @@ def calc_fermienergy_insulator(root):
     return 0.5 * (highest + lowest)
 
 
-def band_structure_info(root, oldxml=False):
+def band_structure_info(root, oldxml=False, lsda=False):
     if oldxml:
         child = root.find('BAND_STRUCTURE_INFO')
         num_k = int(child.find('NUMBER_OF_K-POINTS').text)
-        num_b = int(child.find('NUMBER_OF_BANDS').text)
         eFermi = float(child.find('FERMI_ENERGY').text)
+        if lsda:
+            num_b = [int(child.find('NUMBER_OF_BANDS').attrib['UP']),
+                     int(child.find('NUMBER_OF_BANDS').attrib['DW'])]
+        else:
+            num_b = int(child.find('NUMBER_OF_BANDS').text)
     else:
         child = root.find('output').find('band_structure')
         num_k = int(child.find('nks').text)
-        num_b = int(child.find('nbnd').text)
+        if lsda:
+            num_b_up = int(child.find('nbnd_up').text)
+            num_b_dw = int(child.find('nbnd_dw').text)
+            num_b = [num_b_up, num_b_dw]
+        else:
+            num_b = int(child.find('nbnd').text)
         if child.find('fermi_energy') == None:
             # eFermi = float(child.find('highestOccupiedLevel').text)
             eFermi = calc_fermienergy_insulator(root)
@@ -170,16 +183,25 @@ def latvectors(root, oldxml=False):
         for i in range(3):
             A[i, :] = [float(x) for x in cc.find('a{0}'.format(i + 1)).text.split()]
     else:
-        child = root.find('input').find('atomic_structure')
-        celldm = float(child.attrib['alat'])
-        cell = child.find('cell')
+        input_tag = root.find('input')
+        output_tag = root.find('output')
+        if input_tag is not None:
+            child = input_tag.find('atomic_structure')
+            celldm = float(child.attrib['alat'])
+            cell = child.find('cell')
+            # The celldm should be alat when "CELL_PARAMETERS alat" is used, but it isn't
+            # in the <input> tag probably due to a bug in QE. The value in the 'alat' attribute
+            # of the <atomic_structure> tag inside <output> is alat (= celldm(1)).
+            # So, let's update celldm as follows:
+            celldm = float(output_tag.find('atomic_structure').attrib['alat'])
+        else:
+            # In some cases, <input> tag may be absent. 
+            # If so, let's parse data from <output> instead.
+            child = output_tag.find('atomic_structure')
+            celldm = float(child.attrib['alat'])
+            cell = child.find('cell')
         for i in range(3):
             A[i, :] = [float(x) for x in cell.find('a{0}'.format(i + 1)).text.split()]
-        # The celldm should be alat when "CELL_PARAMETERS alat" is used, but it isn't
-        # in the <input> tag probably due to a but in QE. The value in the 'alat' attribute
-        # of the <atomic_structure> tag inside <output> is alat (= celldm(1)).
-        # So, let's update celldm as follows:
-        celldm = float(root.find('output').find('atomic_structure').attrib['alat'])
     return A, celldm
 
 
@@ -209,8 +231,13 @@ def wfc_cutoff(root, oldxml=False):
         child = root.find('PLANE_WAVES')
         Ecut_for_psi = float(child.find('WFC_CUTOFF').text)
     else:
-        child = root.find('input').find('basis')
-        Ecut_for_psi = float(child.find('ecutwfc').text)
+        input_tag = root.find('input')
+        if input_tag is not None:
+            child = root.find('input').find('basis')
+            Ecut_for_psi = float(child.find('ecutwfc').text)
+        else:
+            child = root.find('output').find('basis_set')
+            Ecut_for_psi = float(child.find('ecutwfc').text)
     return Ecut_for_psi
 
 
@@ -219,7 +246,7 @@ def symmetry(root, oldxml=False):
         child = root.find('SYMMETRIES')
         n_sym = int(child.find('NUMBER_OF_SYMMETRIES').text)
         ftau = np.zeros((3, n_sym))
-        mat_sym = np.zeros((3, 3, n_sym), np.int64)
+        mat_sym = np.zeros((3, 3, n_sym), dtype=int)
         for i in range(n_sym):
             sym = child.find('SYMM.{0}'.format(i + 1))
             rot = sym.find('ROTATION').text.strip().split('\n')
@@ -231,7 +258,7 @@ def symmetry(root, oldxml=False):
         child = root.find('output').find('symmetries')
         n_sym = int(child.find('nsym').text)
         ftau = np.zeros((3, n_sym))
-        mat_sym = np.zeros((3, 3, n_sym), np.int64)
+        mat_sym = np.zeros((3, 3, n_sym), dtype=int)
         for i, sym in enumerate(child.iter('symmetry')):
             ftau[:, i] = [float(x) for x in sym.find('fractional_translation').text.split()]
             rot = sym.find('rotation').text.strip().split('\n')
@@ -242,21 +269,73 @@ def symmetry(root, oldxml=False):
     return mat_sym, ftau
 
 
-def eigenvalues(dirname, num_k, num_b, oldxml=False):
-    evs = np.zeros((num_k, num_b))
+def eigenvalues(dirname, num_k, num_b, oldxml=False, lsda=False):
+    """
+     Parse and return eigenvalues.
+     If lsda = True, the first half of evs[k,:] corresponds to the spin 'up' state
+     and the last half of env[k,:] corresponds to the 'down' state.
+     If lsda = False (non spin-polarized calculation and noncollinear calculation),
+     the eigenvalues are sorted in the ascending order.
+    """
+    if lsda:
+        evs = np.zeros((num_k, np.sum(num_b)))
+    else:
+        evs = np.zeros((num_k, num_b))
+
     if oldxml:
-        for k in range(num_k):
-            tree = ET.parse(os.path.join(dirname, 'K{0:0>5}/eigenval.xml'.format(k + 1)))
-            root = tree.getroot()
-            child = root.find('EIGENVALUES')
-            evs[k, :] = [float(x) for x in child.text.strip().split()]
+        if lsda:
+            for k in range(num_k):
+                evs_tmp = []
+                for ispin in range(2):
+                    tree = ET.parse(os.path.join(dirname, 'K{0:0>5}/eigenval{1}.xml'.format(k + 1, ispin + 1)))
+                    root = tree.getroot()
+                    child = root.find('EIGENVALUES')
+                    evs_tmp.extend([float(x) for x in child.text.strip().split()])
+                evs[k, :] = np.array(evs_tmp)
+        else:
+            for k in range(num_k):
+                tree = ET.parse(os.path.join(dirname, 'K{0:0>5}/eigenval.xml'.format(k + 1)))
+                root = tree.getroot()
+                child = root.find('EIGENVALUES')
+                evs[k, :] = [float(x) for x in child.text.strip().split()]
     else:
         tree = ET.parse(os.path.join(dirname, 'data-file-schema.xml'))
         root = tree.getroot()
         child = root.find('output').find('band_structure')
         for k, kse in enumerate(child.iter('ks_energies')):
             evs[k, :] = [float(x) for x in kse.find('eigenvalues').text.strip().split()]
+
     return evs
+
+
+# def occupations(dirname, num_k, num_b, oldxml=False):
+#    occs = np.zeros((num_k,num_b))
+#    if oldxml:
+#        for k in range(num_k):
+#            tree = ET.parse(os.path.join(dirname, 'K{0:0>5}/eigenval.xml'.format(k+1)))
+#            root = tree.getroot()
+#            child = root.find('OCCUPATIONS')
+#            occs[k,:] = [float(x) for x in child.text.strip().split()]
+#    else:
+#        tree = ET.parse(os.path.join(dirname, 'data-file-schema.xml'))
+#        root = tree.getroot()
+#        child = root.find('output').find('band_structure')
+#        for k,kse in enumerate(child.iter('ks_energies')):
+#            occs[k,:] = [float(x) for x in kse.find('occupations').text.strip().split()]
+#    return occs
+
+def spin_orbit_info(root, oldxml=False):
+    if oldxml:
+        child = root.find('SPIN')
+        is_SpinOrbit = (child.find('SPIN-ORBIT_CALCULATION').text.strip() == 'T')
+        is_noncolin = (child.find('NON-COLINEAR_CALCULATION').text.strip() == 'T')
+        is_LSDA = (child.find('LSDA').text.strip() == 'T')
+    else:
+        child = root.find('output').find('magnetization')
+        is_noncolin = (child.find('noncolin').text == 'true')
+        is_SpinOrbit = (child.find('spinorbit').text == 'true')
+        is_LSDA = (child.find('lsda').text == 'true')
+    return is_noncolin, is_SpinOrbit, is_LSDA
 
 
 def qe2respack(dirname, endian=sys.byteorder):
@@ -282,8 +361,8 @@ def qe2respack(dirname, endian=sys.byteorder):
     print('loading {0}'.format(xmlfile))
     tree = ET.parse(xmlfile)
     root = tree.getroot()
-
-    num_k, num_b, eFermi = band_structure_info(root, oldxml=oldxml)
+    is_noncolin, is_SpinOrbit, is_LSDA = spin_orbit_info(root, oldxml=oldxml)
+    num_k, num_b, eFermi = band_structure_info(root, oldxml=oldxml, lsda=is_LSDA)
     print('num_k = {0}'.format(num_k))
     print('num_b = {0}'.format(num_b))
     print('eFermi = {0}'.format(eFermi))
@@ -303,7 +382,14 @@ def qe2respack(dirname, endian=sys.byteorder):
     n_sym = ftau.shape[1]
     print('n_sym = {0}'.format(n_sym))
 
-    ## end of read XML file
+    mat_sym, ftau = symmetry(root, oldxml=oldxml)
+    print('is_LSDA = {0}'.format(is_LSDA))
+    print('is_noncolin = {0}'.format(is_noncolin))
+    print('is_SpinOrbit = {0}'.format(is_SpinOrbit))
+    ncomp = 1
+    if is_noncolin or is_SpinOrbit: ncomp = 2
+
+    # end of read XML file
 
     k_vec = np.dot(A, k_vec) / celldm
 
@@ -319,7 +405,7 @@ def qe2respack(dirname, endian=sys.byteorder):
     print('generating dir-wfn/dat.lattice')
     with open('./dir-wfn/dat.lattice', 'w') as f:
         for i in range(3):
-            f.write('{0} {1} {2}\n'.format(A[i, 0], A[i, 1], A[i, 2]))
+            f.write('{0:20.15f} {1:20.15f} {2:20.15f}\n'.format(A[i, 0], A[i, 1], A[i, 2]))
 
     print('generating dir-wfn/dat.bandcalc')
     with open('./dir-wfn/dat.bandcalc', 'w') as f:
@@ -333,13 +419,36 @@ def qe2respack(dirname, endian=sys.byteorder):
             f.write('{0}\n'.format(num_Gk[i]))
 
     print('generating dir-wfn/dat.eigenvalue')
-    eigvals = eigenvalues(dirname, num_k, num_b, oldxml=oldxml)
-    with open('./dir-wfn/dat.eigenvalue', 'w') as f:
-        f.write('{0}\n'.format(num_b))
-        for k in range(num_k):
-            for i in range(num_b):
-                f.write(str(eigvals[k, i]))
-                f.write('\n')
+    eigvals = eigenvalues(dirname, num_k, num_b, oldxml=oldxml, lsda=is_LSDA)
+    if is_LSDA:
+        with open('./dir-wfn/dat.eigenvalue.up', 'w') as f:
+            f.write('{0}\n'.format(num_b[0]))
+            for k in range(num_k):
+                for i in range(num_b[0]):
+                    f.write(str(eigvals[k, i]))
+                    f.write('\n')
+
+        with open('./dir-wfn/dat.eigenvalue.dn', 'w') as f:
+            f.write('{0}\n'.format(num_b[1]))
+            for k in range(num_k):
+                for i in range(num_b[1]):
+                    f.write(str(eigvals[k, i + num_b[0]]))
+                    f.write('\n')
+    else:
+        with open('./dir-wfn/dat.eigenvalue', 'w') as f:
+            f.write('{0}\n'.format(num_b))
+            for k in range(num_k):
+                for i in range(num_b):
+                    f.write(str(eigvals[k, i]))
+                    f.write('\n')
+
+    #    print('generating dir-wfn/dat.occ')
+    #    occs = occupations(dirname, num_k, num_b, oldxml=oldxml)
+    #    with open('./dir-wfn/dat.occ', 'w') as f:
+    #        for k in range(num_k):
+    #            for i in range(num_b):
+    #                f.write(str(occs[k,i]))
+    #                f.write('\n')
 
     print('generating dir-wfn/dat.atom_position')
     with open('./dir-wfn/dat.atom_position', 'w') as f:
@@ -381,16 +490,20 @@ def qe2respack(dirname, endian=sys.byteorder):
         else:
             for k in range(num_k):
                 f.write('{0}\n'.format(num_Gk[k]))
-                with open(os.path.join(dirname, 'wfc{0}.dat'.format(k + 1)), 'rb') as inp:
+                if is_LSDA:
+                    fname_to_parse = os.path.join(dirname, 'wfcup{0}.dat'.format(k + 1))
+                else:
+                    fname_to_parse = os.path.join(dirname, 'wfc{0}.dat'.format(k + 1))
+
+                with open(fname_to_parse, 'rb') as inp:
                     fmt = endian_fmt + 'i'
                     fmt2 = endian_fmt + 'iii'
                     # skip three blocks
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
+                    for i in range(3):
+                        # Get the record length from the heading 4 bytes
+                        n = struct.unpack(fmt, inp.read(4))[0]
+                        # Read the body record + tailing 4 bytes
+                        inp.read(n + 4)
 
                     n = struct.unpack(fmt, inp.read(4))[0]
                     nr = n // 12  # three integers
@@ -398,44 +511,118 @@ def qe2respack(dirname, endian=sys.byteorder):
                         kg = struct.unpack(fmt2, inp.read(12))
                         f.write('{0} {1} {2}\n'.format(kg[0], kg[1], kg[2]))
 
-    print('generating dir-wfn/dat.wfn')
-    with open('./dir-wfn/dat.wfn', 'wb') as f:
-        f.write(struct.pack(endian_fmt + 'i', 4))
-        f.write(struct.pack(endian_fmt + 'i', 1))
-        f.write(struct.pack(endian_fmt + 'i', 4))
-        if oldxml:
-            for k in range(num_k):
-                with Iotk_dat(os.path.join(dirname, 'K{0:0>5}/evc.dat'.format(k + 1)), endian=endian) as inp:
-                    for ib in range(num_b):
-                        size, dat = inp.load('evc.{0}'.format(ib + 1), raw=True)
-                        f.write(struct.pack(endian_fmt + 'i', size))
-                        f.write(dat)
-                        f.write(struct.pack(endian_fmt + 'i', size))
-        else:
-            for k in range(num_k):
-                with open(os.path.join(dirname, 'wfc{0}.dat'.format(k + 1)), 'rb') as inp:
-                    # skip four blocks
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
-                    n = struct.unpack(fmt, inp.read(4))[0]
-                    inp.read(n + 4)
+    print(ncomp)
 
-                    for ib in range(num_b):
+    if oldxml:
+        if is_LSDA:
+            for ispin, spin in enumerate(['up', 'dn']):
+                print('generating dir-wfn/dat.wfn.%s' % spin)
+                with open('./dir-wfn/dat.wfn.%s' % spin, 'wb') as f:
+                    f.write(struct.pack(endian_fmt + 'i', 4))
+                    f.write(struct.pack(endian_fmt + 'i', ncomp))
+                    f.write(struct.pack(endian_fmt + 'i', 4))
+                    for k in range(num_k):
+                        with Iotk_dat(os.path.join(dirname, 'K{0:0>5}/evc{1}.dat'.format(k + 1, ispin + 1)),
+                                      endian=endian) as inp:
+                            for ib in range(num_b[ispin]):
+                                size, dat = inp.load('evc.{0}'.format(ib + 1), raw=True)
+                                f.write(struct.pack(endian_fmt + 'i', size))
+                                f.write(dat)
+                                f.write(struct.pack(endian_fmt + 'i', size))
+        else:
+            print('generating dir-wfn/dat.wfn')
+            with open('./dir-wfn/dat.wfn', 'wb') as f:
+                # with open('./dir-wfn/dat.wfn_ascii', 'w') as f2:
+                f.write(struct.pack(endian_fmt + 'i', 4))
+                f.write(struct.pack(endian_fmt + 'i', ncomp))
+                f.write(struct.pack(endian_fmt + 'i', 4))
+                for k in range(num_k):
+                    if not (is_SpinOrbit or is_noncolin):
+                        with Iotk_dat(os.path.join(dirname, 'K{0:0>5}/evc.dat'.format(k + 1)), endian=endian) as inp:
+                            for ib in range(num_b):
+                                size, dat = inp.load('evc.{0}'.format(ib + 1), raw=True)
+                                f.write(struct.pack(endian_fmt + 'i', size))
+                                f.write(dat)
+                                f.write(struct.pack(endian_fmt + 'i', size))
+                    else:
+                        # noncollinear case
+                        with Iotk_dat(os.path.join(dirname, 'K{0:0>5}/evc1.dat'.format(k + 1)),
+                                      endian=endian) as inp1:
+                            with Iotk_dat(os.path.join(dirname, 'K{0:0>5}/evc2.dat'.format(k + 1)),
+                                          endian=endian) as inp2:
+                                for ib in range(num_b):
+                                    size1, dat1 = inp1.load('evc.{0}'.format(ib + 1), raw=True)
+                                    size2, dat2 = inp2.load('evc.{0}'.format(ib + 1), raw=True)
+                                    f.write(struct.pack(endian_fmt + 'i', size1 + size2))
+                                    f.write(dat1)
+                                    #                            f.write(struct.pack(endian_fmt+'i', size1))
+                                    #                            f.write(struct.pack(endian_fmt+'i', size2))
+                                    f.write(dat2)
+                                    f.write(struct.pack(endian_fmt + 'i', size1 + size2))
+
+    else:
+        # New format
+        if is_LSDA:
+            slabel_qe = ['up', 'dw']
+            for ispin, spin in enumerate(['up', 'dn']):
+                print('generating dir-wfn/dat.wfn.%s' % spin)
+                with open('./dir-wfn/dat.wfn.%s' % spin, 'wb') as f:
+                    f.write(struct.pack(endian_fmt + 'i', 4))
+                    f.write(struct.pack(endian_fmt + 'i', ncomp))
+                    f.write(struct.pack(endian_fmt + 'i', 4))
+                    for k in range(num_k):
+                        with open(os.path.join(dirname, 'wfc{0}{1}.dat'.format(slabel_qe[ispin], k + 1)), 'rb') as inp:
+                            # skip four blocks
+                            fmt = endian_fmt + 'i'
+                            n = struct.unpack(fmt, inp.read(4))[0]
+                            inp.read(n + 4)
+                            n = struct.unpack(fmt, inp.read(4))[0]
+                            inp.read(n + 4)
+                            n = struct.unpack(fmt, inp.read(4))[0]
+                            inp.read(n + 4)
+                            n = struct.unpack(fmt, inp.read(4))[0]
+                            inp.read(n + 4)
+                            for ib in range(num_b[ispin]):
+                                n = struct.unpack(fmt, inp.read(4))[0]
+                                dat = inp.read(n)
+                                inp.read(4)
+                                f.write(struct.pack(endian_fmt + 'i', n))
+                                f.write(dat)
+                                f.write(struct.pack(endian_fmt + 'i', n))
+        else:
+            print('generating dir-wfn/dat.wfn')
+            with open('./dir-wfn/dat.wfn', 'wb') as f:
+                # with open('./dir-wfn/dat.wfn_ascii', 'w') as f2:
+                f.write(struct.pack(endian_fmt + 'i', 4))
+                f.write(struct.pack(endian_fmt + 'i', ncomp))
+                f.write(struct.pack(endian_fmt + 'i', 4))
+                for k in range(num_k):
+                    with open(os.path.join(dirname, 'wfc{0}.dat'.format(k + 1)), 'rb') as inp:
+                        # skip four blocks
+                        fmt = endian_fmt + 'i'
                         n = struct.unpack(fmt, inp.read(4))[0]
-                        dat = inp.read(n)
-                        inp.read(4)
-                        f.write(struct.pack(endian_fmt + 'i', n))
-                        f.write(dat)
-                        f.write(struct.pack(endian_fmt + 'i', n))
+                        inp.read(n + 4)
+                        n = struct.unpack(fmt, inp.read(4))[0]
+                        inp.read(n + 4)
+                        n = struct.unpack(fmt, inp.read(4))[0]
+                        inp.read(n + 4)
+                        n = struct.unpack(fmt, inp.read(4))[0]
+                        inp.read(n + 4)
+                        for ib in range(num_b):
+                            n = struct.unpack(fmt, inp.read(4))[0]
+                            dat = inp.read(n)
+                            # print(ib,n)
+                            # print(dat)
+                            inp.read(4)
+                            f.write(struct.pack(endian_fmt + 'i', n))
+                            f.write(dat)
+                            f.write(struct.pack(endian_fmt + 'i', n))
+                            # f2.write(int(dat))
 
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='convert Quangum Espresso output into RESPACK input.')
+    parser = argparse.ArgumentParser(description='convert Quantum Espresso output into RESPACK input.')
     parser.add_argument('QE_output_dir',
                         help='output directory of Quantum Espresso (where data-file-schema.xml exists).')
     args = parser.parse_args()

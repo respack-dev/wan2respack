@@ -6,12 +6,13 @@ module qe_wfn_mod
   integer:: NTK   ! num_kpts in wannier90
   integer:: NTG
   integer:: NTB
+  integer:: ncomp
   real(8),allocatable::SK(:,:) !SK(3,NTK)
   integer,allocatable::NGI(:)  !NGI(NTK)
   integer,allocatable::KGI(:,:,:)  !NGI(3,NTG,NTK)
   integer,allocatable::KG0(:,:,:)  !NGI(3,NTG,NTK)
   !real(8),allocatable::E_EIGI(:,:) !E_EIGI(NTB,NTK)
-  complex(8),allocatable::C0QE(:,:,:)!C0QE(NTG,NTB,NTK)
+  complex(8),allocatable::C0QE(:,:,:,:)!C0QE(NTG,ncomp,NTB,NTK)
   integer,allocatable::packing(:,:,:,:)!packing(-L1:L1,-L2:L2,-L3:L3,NTK)
 
   real(8)::a(3,3)
@@ -130,19 +131,15 @@ module qe_wfn_mod
   ! read dat.wfn => C0QE
   subroutine rd_dat_wavefunction(file_dat_wfn)
     character(len=*), intent(in):: file_dat_wfn
-    integer::ik,ib,ig,ncomp
+    integer::ik,ib,ig,ic
     OPEN(102,FILE=file_dat_wfn,FORM='unformatted') 
     rewind(102)
     read(102)ncomp 
-    if(ncomp/=1)then 
-      write(6,*)'This program not suport ncomp/=1; then stop'
-      stop
-    endif 
-    allocate(C0QE(NTG,NTB,NTK))
+    allocate(C0QE(NTG,ncomp,NTB,NTK))
     C0QE=0.0d0
     do ik=1,NTK
       do ib=1,NTB
-        read(102) (C0QE(ig,ib,ik), ig=1,NGI(ik))
+        read(102) ((C0QE(ig,ic,ib,ik), ig=1,NGI(ik)), ic=1,ncomp)
       enddo!ib 
     enddo!ik          
     close(102) 
@@ -150,13 +147,13 @@ module qe_wfn_mod
 
   ! C0QE => C0
   subroutine make_dat_C0(C0QE, C0)
-    complex(8)::C0QE(NTG,NTB,NTK),C0(NTG,NTB,NTK)
+    complex(8)::C0QE(NTG,ncomp,NTB,NTK),C0(NTG,ncomp,NTB,NTK)
     integer:: ik, ig, jg, i, j, k
     do ik=1,NTK 
       do ig=1, NGI(ik)
         i = KG0(1,ig,ik); j = KG0(2,ig,ik); k = KG0(3,ig,ik)
         jg = packing(i,j,k,ik) 
-        C0(ig,:,ik) = C0QE(jg,:,ik)
+        C0(ig,:,:,ik) = C0QE(jg,:,:,ik)
       end do
     end do
   end subroutine
@@ -402,17 +399,17 @@ contains
 
   subroutine write_dat_wan()
     use wan90_chk_mod, only : ndimwin, num_wann, num_kpts
-    use qe_wfn_mod,  only : C0QE, NGI, NTG, NTB, NTK, make_dat_C0
+    use qe_wfn_mod,  only : C0QE, NGI, NTG, NTB, NTK, ncomp, make_dat_C0
     implicit none
     integer, parameter :: iunit_file=100
-    integer:: ik, ig, jw, jb
-    complex(8),allocatable:: C_tilde(:,:,:), C0(:,:,:)
+    integer:: ik, ig, jw, jb, ic
+    complex(8),allocatable:: C_tilde(:,:,:,:), C0(:,:,:,:)
     ! packing is RESPACK packing
     ! QE G vectors for Wannier90 (dat.kg) ==> RESPACK packing
-    allocate(C0(NTG,NTB,NTK));C0(:,:,:) = 0.0D0
+    allocate(C0(NTG,ncomp,NTB,NTK));C0(:,:,:,:) = 0.0D0
     call make_dat_C0(C0QE, C0)
 
-    allocate(C_tilde(NTG,num_wann,num_kpts));C_tilde(:,:,:) = 0.0D0
+    allocate(C_tilde(NTG,ncomp,num_wann,num_kpts));C_tilde(:,:,:,:) = 0.0D0
     write(iunit_log, *) 'Calculating C_tilde'
     !write(iunit_log, *) num_kpts, NTK
     !write(iunit_log, *) NTB, maxval(ndimwin(:))
@@ -420,19 +417,21 @@ contains
     do ik=1, num_kpts
       do jw=1, num_wann
         do jb=1, ndimwin(ik)
-          do ig=1, NGI(ik)
-            C_tilde(ig,jw,ik) = C_tilde(ig,jw,ik) &
-              + UNT(jb,jw,ik) * C0(ig,jb+ndim_exclude_low(ik),ik)
-          enddo !jb
-        enddo !jw
-      enddo !ig
-    enddo !ik
+          do ic=1, ncomp
+            do ig=1, NGI(ik)
+              C_tilde(ig,ic,jw,ik) = C_tilde(ig,ic,jw,ik) &
+                + UNT(jb,jw,ik) * C0(ig,ic,jb+ndim_exclude_low(ik),ik)
+            enddo
+          enddo
+        enddo
+      enddo
+    enddo
 
     write(iunit_log, '(" Writing ./dir-wan/dat.wan:  NWF, NTK = ", i5, i5)') num_wann, num_kpts
     OPEN(iunit_file, FILE='./dir-wan/dat.wan', FORM='unformatted')
     write(iunit_file) num_wann
     do ik=1, num_kpts
-      write(iunit_file) ((C_tilde(ig, jw, ik), ig=1, NGI(ik)), jw=1, num_wann)
+      write(iunit_file) (((C_tilde(ig,ic,jw,ik), ig=1, NGI(ik)), jw=1, num_wann), ic=1,ncomp)
     enddo
     close(iunit_file)
     deallocate(C0, C_tilde)
