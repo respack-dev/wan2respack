@@ -164,7 +164,7 @@ win = "Al.win"                     # Output file for Wannier90 input
 
 ## CITATION
 If you use this software in your research, please cite:
-[K. Kurita, T. Misawa, K. Yoshimi, K. Ido, T. Koretsune, "Interface tool from Wannier90 to RESPACK: wan2respack", arXiv:2302.13531](https://arxiv.org/abs/2302.13531)
+[K. Kurita, T. Misawa, K. Yoshimi, K. Ido, T. Koretsune, "Interface tool from Wannier90 to RESPACK: wan2respack", Comput. Phys. Commun. **292**, 108854](https://doi.org/10.1016/j.cpc.2023.108854).
 
 ## AUTHORS
 - Kensuke Kurita
