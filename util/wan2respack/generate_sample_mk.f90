@@ -4,8 +4,8 @@ PROGRAM generate_sample_mk
 
     integer :: ik, ix, ig
 
-    ! Define the logging unit number for file operations
-    integer, parameter :: iunit_log = 150
+    ! Initialize iunit_log in the module
+    iunit_log = 150
 
     ! Open the log file for writing
     open(iunit_log, FILE="LOG.mk")

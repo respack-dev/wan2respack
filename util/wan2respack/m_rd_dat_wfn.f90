@@ -26,6 +26,10 @@ module m_rd_dat_wfn
   public::rd_dat_nkm      ! Read number of G-vectors
   public::rd_dat_kg       ! Read G-vectors
 
+  ! Logging
+  ! ------
+  integer,public::iunit_log  ! Log file unit number
+
   ! Symmetry data
   ! ------------
   integer,public::nsymq    ! Number of symmetry operations
@@ -94,10 +98,6 @@ module m_rd_dat_wfn
   integer,public::ncomp  ! Number of components
   complex(4),public,allocatable::CIR(:,:,:)  ! Wavefunction coefficients (NTG,NTB,Nk_irr)
   complex(8),allocatable::CIRtmp(:)  ! Temporary array for wavefunction coefficients (NTG)
-
-  ! Logging
-  ! ------
-  integer,public::iunit_log  ! Log file unit number
 
 contains
 !
